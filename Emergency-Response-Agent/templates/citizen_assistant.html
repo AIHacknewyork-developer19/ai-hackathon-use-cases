@@ -1,0 +1,721 @@
+{% extends "base.html" %}
+
+{% block title %}Virtual Citizen Assistant - AI Integrated System{% endblock %}
+
+{% block content %}
+<div class="col-12">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="fas fa-users me-2 text-info"></i>
+                Virtual Citizen Assistant
+            </h2>
+            <p class="text-muted mb-0">AI-powered assistant for government services, document retrieval, and citizen support</p>
+        </div>
+        <div>
+            <a href="/agents" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-arrow-left me-1"></i>Back to Agents Hub
+            </a>
+            <button class="btn btn-info" onclick="showChatHelp()">
+                <i class="fas fa-question-circle me-1"></i>Help
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Chat Interface -->
+    <div class="row">
+        <!-- Chat Area -->
+        <div class="col-md-8">
+            <div class="card chat-container">
+                <div class="card-header bg-info text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>Chat with Assistant
+                        </h5>
+                        <div>
+                            <span class="badge bg-light text-info" id="assistant-status">Online</span>
+                            <button class="btn btn-sm btn-outline-light ms-2" onclick="clearChat()">
+                                <i class="fas fa-trash me-1"></i>Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Messages -->
+                <div class="card-body chat-messages p-0" id="chat-messages" style="height: 500px; overflow-y: auto;">
+                    <div class="p-3">
+                        <div class="message assistant-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <div class="message-bubble bg-light">
+                                    <p class="mb-1">👋 Hello! I'm your Virtual Citizen Assistant. I can help you with:</p>
+                                    <ul class="mb-0">
+                                        <li>Finding government services and information</li>
+                                        <li>Document retrieval and guidance</li>
+                                        <li>Scheduling appointments</li>
+                                        <li>Answering questions about city services</li>
+                                    </ul>
+                                    <small class="text-muted">How can I assist you today?</small>
+                                </div>
+                                <small class="text-muted">Just now</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="card-footer">
+                    <form id="chat-form" class="d-flex">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="chat-input" 
+                                   placeholder="Ask me about government services, documents, or appointments..." 
+                                   autocomplete="off">
+                            <button class="btn btn-info" type="submit" id="send-button">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="mt-2">
+                        <div class="d-flex flex-wrap gap-2" id="quick-actions">
+                            <button class="btn btn-sm btn-outline-info" onclick="sendQuickMessage('How do I apply for a business license?')">
+                                Business License
+                            </button>
+                            <button class="btn btn-sm btn-outline-info" onclick="sendQuickMessage('What documents do I need for unemployment benefits?')">
+                                Unemployment Benefits
+                            </button>
+                            <button class="btn btn-sm btn-outline-info" onclick="sendQuickMessage('How can I schedule a DMV appointment?')">
+                                DMV Appointment
+                            </button>
+                            <button class="btn btn-sm btn-outline-info" onclick="sendQuickMessage('Find housing assistance programs')">
+                                Housing Assistance
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Service Categories -->
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Popular Services
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action" onclick="sendQuickMessage('Tell me about business permits')">
+                            <i class="fas fa-briefcase me-2 text-primary"></i>
+                            Business & Permits
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" onclick="sendQuickMessage('What health services are available?')">
+                            <i class="fas fa-heartbeat me-2 text-danger"></i>
+                            Health Services
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" onclick="sendQuickMessage('How do I pay my taxes?')">
+                            <i class="fas fa-calculator me-2 text-warning"></i>
+                            Taxes & Finance
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" onclick="sendQuickMessage('Where can I vote?')">
+                            <i class="fas fa-vote-yea me-2 text-info"></i>
+                            Voting & Elections
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" onclick="sendQuickMessage('Find transportation options')">
+                            <i class="fas fa-bus me-2 text-success"></i>
+                            Transportation
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document Search -->
+            <div class="card mb-3">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="fas fa-search me-2"></i>Document Search
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="document-search" 
+                               placeholder="Search documents...">
+                        <button class="btn btn-outline-warning" type="button" onclick="searchDocuments()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div id="search-results">
+                        <small class="text-muted">Enter keywords to search government documents</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Interactions -->
+            <div class="card mb-3">
+                <div class="card-header bg-dark text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Recent Topics
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="recent-topics">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-clock text-muted me-2"></i>
+                            <small class="text-muted">No recent conversations</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Features -->
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-robot me-2"></i>AI Capabilities
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2">
+                            <i class="fas fa-brain text-info me-2"></i>
+                            <strong>Natural Language Understanding</strong>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-database text-info me-2"></i>
+                            <strong>Azure AI Search Integration</strong>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-calendar text-info me-2"></i>
+                            <strong>Appointment Scheduling</strong>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-language text-info me-2"></i>
+                            <strong>Multi-language Support</strong>
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-shield-alt text-info me-2"></i>
+                            <strong>Secure & Private</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Typing Indicator -->
+<div id="typing-indicator" class="message assistant-message" style="display: none;">
+    <div class="message-avatar">
+        <i class="fas fa-robot"></i>
+    </div>
+    <div class="message-content">
+        <div class="message-bubble bg-light">
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.chat-messages {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.message {
+    display: flex;
+    margin-bottom: 1rem;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.user-message {
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin: 0 0.5rem;
+}
+
+.user-message .message-avatar {
+    background: linear-gradient(135deg, #007bff, #6f42c1);
+    color: white;
+}
+
+.assistant-message .message-avatar {
+    background: linear-gradient(135deg, #17a2b8, #20c997);
+    color: white;
+}
+
+.message-content {
+    flex: 1;
+    max-width: 80%;
+}
+
+.message-bubble {
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    margin-bottom: 0.25rem;
+    word-wrap: break-word;
+}
+
+.user-message .message-bubble {
+    background: linear-gradient(135deg, #007bff, #6f42c1);
+    color: white;
+    margin-left: auto;
+}
+
+.assistant-message .message-bubble {
+    background: white;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.typing-dots {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.typing-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6c757d;
+    animation: typingDot 1.5s infinite;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingDot {
+    0%, 60%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    30% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chat-container {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-container .card-body {
+    flex: 1;
+    overflow: hidden;
+}
+
+#quick-actions .btn {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let chatHistory = [];
+    let recentTopics = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setupChatHandlers();
+    });
+
+    function setupChatHandlers() {
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (message) {
+                sendMessage(message);
+                chatInput.value = '';
+            }
+        });
+
+        // Auto-focus on input
+        chatInput.focus();
+
+        // Enable document search on Enter
+        document.getElementById('document-search').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchDocuments();
+            }
+        });
+    }
+
+    async function sendMessage(message) {
+        // Add user message to chat
+        addMessage(message, 'user');
+        
+        // Show typing indicator
+        showTypingIndicator();
+        
+        // Update recent topics
+        addToRecentTopics(message);
+        
+        try {
+            const response = await fetch('/api/citizen/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            });
+
+            const result = await response.json();
+            
+            hideTypingIndicator();
+
+            if (result.success) {
+                addMessage(result.response, 'assistant');
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            hideTypingIndicator();
+            console.error('Chat error:', error);
+            
+            // Show mock response for demo
+            const mockResponse = generateMockResponse(message);
+            setTimeout(() => addMessage(mockResponse, 'assistant'), 1000);
+        }
+    }
+
+    function sendQuickMessage(message) {
+        const chatInput = document.getElementById('chat-input');
+        chatInput.value = message;
+        sendMessage(message);
+    }
+
+    function addMessage(text, sender) {
+        const messagesContainer = document.getElementById('chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}-message p-3`;
+        
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        messageDiv.innerHTML = `
+            <div class="message-avatar">
+                <i class="fas ${sender === 'user' ? 'fa-user' : 'fa-robot'}"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-bubble ${sender === 'user' ? '' : 'bg-light'}">
+                    ${formatMessage(text)}
+                </div>
+                <small class="text-muted">${timestamp}</small>
+            </div>
+        `;
+        
+        messagesContainer.appendChild(messageDiv);
+        scrollToBottom();
+        
+        // Store in chat history
+        chatHistory.push({ message: text, sender: sender, timestamp: new Date() });
+    }
+
+    function formatMessage(text) {
+        // Basic formatting for links, lists, etc.
+        return text
+            .replace(/\n/g, '<br>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>');
+    }
+
+    function showTypingIndicator() {
+        const messagesContainer = document.getElementById('chat-messages');
+        const typingIndicator = document.getElementById('typing-indicator').cloneNode(true);
+        typingIndicator.id = 'active-typing-indicator';
+        typingIndicator.style.display = 'flex';
+        typingIndicator.className += ' p-3';
+        
+        messagesContainer.appendChild(typingIndicator);
+        scrollToBottom();
+    }
+
+    function hideTypingIndicator() {
+        const activeIndicator = document.getElementById('active-typing-indicator');
+        if (activeIndicator) {
+            activeIndicator.remove();
+        }
+    }
+
+    function scrollToBottom() {
+        const messagesContainer = document.getElementById('chat-messages');
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function generateMockResponse(userMessage) {
+        const message = userMessage.toLowerCase();
+        
+        if (message.includes('business') || message.includes('license')) {
+            return `To apply for a business license, you'll need to:
+
+1. **Determine your business type** - Sole proprietorship, LLC, Corporation, etc.
+2. **Choose a business name** - Check availability and register if needed
+3. **Complete the application** - Forms are available online at city.gov/business
+4. **Pay the required fees** - Varies by business type ($50-$500)
+5. **Submit required documents** - ID, proof of address, business plan
+
+**Next steps:** Would you like me to help you schedule an appointment with our business services department?`;
+        }
+        
+        if (message.includes('unemployment') || message.includes('benefits')) {
+            return `For unemployment benefits, you'll typically need:
+
+**Required Documents:**
+- Valid photo ID (driver's license, passport, etc.)
+- Social Security card
+- Recent pay stubs or employment records
+- Bank account information for direct deposit
+
+**Eligibility Requirements:**
+- Must be unemployed through no fault of your own
+- Meet work and wage requirements
+- Actively seeking employment
+
+**How to Apply:**
+1. Visit unemployment.state.gov
+2. Complete the online application
+3. Provide all required documentation
+4. Attend any required interviews
+
+Would you like help finding the specific website for your state?`;
+        }
+        
+        if (message.includes('dmv') || message.includes('appointment')) {
+            return `I can help you schedule a DMV appointment! Here are the available services:
+
+**Online Services (No appointment needed):**
+- Vehicle registration renewal
+- Address changes
+- Duplicate registration/title requests
+
+**In-Person Appointments Available For:**
+- Driver's license renewal/new license
+- Real ID application
+- Vehicle title transfers
+- License plate pickup
+
+**To schedule:**
+1. Visit dmv.state.gov/appointments
+2. Select your preferred location
+3. Choose available time slot
+4. Bring required documents
+
+Would you like me to check current wait times at DMV locations near you?`;
+        }
+        
+        if (message.includes('housing') || message.includes('assistance')) {
+            return `Here are housing assistance programs available:
+
+**Emergency Rental Assistance:**
+- Up to 18 months of rent/utility assistance
+- Available for income-qualified households
+- Apply at: housinghelp.city.gov
+
+**First-Time Homebuyer Programs:**
+- Down payment assistance loans
+- Reduced interest rates
+- Homebuyer education courses
+
+**Public Housing:**
+- Affordable rental units
+- Section 8 housing vouchers
+- Senior/disabled housing options
+
+**How to Apply:**
+1. Complete pre-qualification screening
+2. Gather income documentation
+3. Submit application online or in-person
+4. Attend housing counseling session
+
+Would you like me to connect you with a housing counselor for personalized assistance?`;
+        }
+        
+        // Default response
+        return `I understand you're looking for information about "${userMessage}". Here's what I can help you with:
+
+**General Services:**
+- Business licenses and permits
+- Tax information and payments
+- Voting and election information
+- Health services directory
+- Transportation options
+
+**Document Services:**
+- Document searches and retrieval
+- Form downloads and instructions
+- Application status checks
+
+**Appointments:**
+- Schedule DMV appointments
+- Book health services
+- City council meetings
+
+Could you be more specific about what you need help with? I'm here to assist you with any government services or information you need.`;
+    }
+
+    function addToRecentTopics(message) {
+        const topic = message.length > 50 ? message.substring(0, 50) + '...' : message;
+        recentTopics.unshift({ text: topic, timestamp: new Date() });
+        
+        // Keep only last 5 topics
+        recentTopics = recentTopics.slice(0, 5);
+        
+        updateRecentTopicsDisplay();
+    }
+
+    function updateRecentTopicsDisplay() {
+        const container = document.getElementById('recent-topics');
+        
+        if (recentTopics.length === 0) {
+            container.innerHTML = `
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fas fa-clock text-muted me-2"></i>
+                    <small class="text-muted">No recent conversations</small>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = recentTopics.map(topic => `
+            <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-comment text-muted me-2"></i>
+                <small class="text-truncate" style="cursor: pointer;" onclick="sendQuickMessage('${topic.text.replace(/'/g, '\\'')}')">${topic.text}</small>
+            </div>
+        `).join('');
+    }
+
+    async function searchDocuments() {
+        const query = document.getElementById('document-search').value.trim();
+        const resultsContainer = document.getElementById('search-results');
+        
+        if (!query) {
+            resultsContainer.innerHTML = '<small class="text-muted">Enter keywords to search government documents</small>';
+            return;
+        }
+        
+        resultsContainer.innerHTML = `
+            <div class="text-center">
+                <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
+                <small class="text-muted ms-2">Searching...</small>
+            </div>
+        `;
+        
+        // Simulate search delay
+        setTimeout(() => {
+            const mockResults = [
+                { title: 'Business License Application Form', type: 'PDF', url: '#' },
+                { title: 'Tax Payment Instructions', type: 'HTML', url: '#' },
+                { title: 'Parking Permit Guidelines', type: 'PDF', url: '#' }
+            ];
+            
+            resultsContainer.innerHTML = mockResults.map(result => `
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div>
+                        <small class="fw-bold d-block">${result.title}</small>
+                        <small class="text-muted">${result.type}</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-warning" onclick="sendQuickMessage('Tell me about ${result.title}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            `).join('');
+        }, 1500);
+    }
+
+    function clearChat() {
+        if (confirm('Are you sure you want to clear the chat history?')) {
+            const messagesContainer = document.getElementById('chat-messages');
+            messagesContainer.innerHTML = `
+                <div class="p-3">
+                    <div class="message assistant-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-bubble bg-light">
+                                <p class="mb-1">👋 Hello! I'm your Virtual Citizen Assistant. I can help you with:</p>
+                                <ul class="mb-0">
+                                    <li>Finding government services and information</li>
+                                    <li>Document retrieval and guidance</li>
+                                    <li>Scheduling appointments</li>
+                                    <li>Answering questions about city services</li>
+                                </ul>
+                                <small class="text-muted">How can I assist you today?</small>
+                            </div>
+                            <small class="text-muted">Just now</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            chatHistory = [];
+            recentTopics = [];
+            updateRecentTopicsDisplay();
+            showToast('Chat cleared successfully', 'info');
+        }
+    }
+
+    function showChatHelp() {
+        const helpMessage = `Here are some ways to interact with me:
+
+**Ask questions naturally:**
+- "How do I apply for a business license?"
+- "What documents do I need for unemployment?"
+- "Where can I vote?"
+
+**Use quick action buttons** below the chat input for common topics.
+
+**Search documents** using the search box in the sidebar.
+
+**I can help with:**
+- Government services information
+- Document retrieval and guidance
+- Appointment scheduling
+- Forms and applications
+- City services directory
+
+Just type your question and I'll do my best to help!`;
+        
+        addMessage(helpMessage, 'assistant');
+    }
+</script>
+{% endblock %}

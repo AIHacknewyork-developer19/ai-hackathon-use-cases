@@ -1,0 +1,541 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Emergency Response Agent{% endblock %}
+
+{% block content %}
+<div class="col-12">
+    <!-- Dashboard Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="fas fa-tachometer-alt me-2 text-primary"></i>
+                Emergency Response Dashboard
+            </h2>
+            <p class="text-muted mb-0">Real-time monitoring and coordination center</p>
+        </div>
+        <div>
+            <button class="btn btn-success me-2" onclick="refreshDashboard()">
+                <i class="fas fa-sync-alt me-1"></i>Refresh
+            </button>
+            <a href="{{ url_for('create_scenario') }}" class="btn btn-primary">
+                <i class="fas fa-plus-circle me-1"></i>New Scenario
+            </a>
+        </div>
+    </div>
+
+    <!-- Status Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card status-card bg-danger text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Critical</h6>
+                            <h2 class="mb-0" id="critical-count">0</h2>
+                        </div>
+                        <i class="fas fa-exclamation-triangle fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card status-card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">High</h6>
+                            <h2 class="mb-0" id="high-count">2</h2>
+                        </div>
+                        <i class="fas fa-exclamation-circle fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card status-card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Medium</h6>
+                            <h2 class="mb-0" id="medium-count">1</h2>
+                        </div>
+                        <i class="fas fa-info-circle fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card status-card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Under Control</h6>
+                            <h2 class="mb-0" id="controlled-count">5</h2>
+                        </div>
+                        <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Row -->
+    <div class="row">
+        <!-- Active Scenarios -->
+        <div class="col-md-8">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Active Emergency Scenarios
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Location</th>
+                                    <th>Severity</th>
+                                    <th>Status</th>
+                                    <th>Started</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scenarios-table">
+                                <!-- Dynamic content will be loaded here -->
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">
+                                        <i class="fas fa-spinner fa-spin me-2"></i>Loading scenarios...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats & Weather -->
+        <div class="col-md-4">
+            <!-- Weather Widget -->
+            <div class="card mb-3">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-cloud-sun me-2"></i>Current Weather
+                    </h6>
+                </div>
+                <div class="card-body" id="weather-widget">
+                    <div class="text-center">
+                        <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+                        <p class="text-muted mt-2">Loading weather data...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resource Status -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-users me-2"></i>Resource Status
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small">Emergency Personnel</span>
+                            <span class="badge bg-success">Available</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: 85%"></div>
+                        </div>
+                        <small class="text-muted">850/1000 personnel</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small">Emergency Vehicles</span>
+                            <span class="badge bg-warning">Limited</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" style="width: 65%"></div>
+                        </div>
+                        <small class="text-muted">130/200 vehicles</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small">Medical Supplies</span>
+                            <span class="badge bg-success">Good</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: 90%"></div>
+                        </div>
+                        <small class="text-muted">90% stocked</small>
+                    </div>
+                    
+                    <div class="mb-0">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small">Emergency Shelters</span>
+                            <span class="badge bg-info">Ready</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" style="width: 75%"></div>
+                        </div>
+                        <small class="text-muted">15/20 shelters</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Response Timeline -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock me-2"></i>Recent Response Timeline
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline" id="response-timeline">
+                        <!-- Timeline items will be loaded dynamically -->
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-spinner fa-spin me-2"></i>Loading timeline...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scenario Details Modal -->
+<div class="modal fade" id="scenarioModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Scenario Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="scenario-details">
+                <!-- Scenario details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateScenario()">Update Status</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let dashboardInterval;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        loadDashboardData();
+        loadWeatherData();
+        loadTimeline();
+        
+        // Auto-refresh every 30 seconds
+        dashboardInterval = setInterval(refreshDashboard, 30000);
+    });
+    
+    function refreshDashboard() {
+        showToast('Refreshing dashboard...', 'info');
+        loadDashboardData();
+        loadWeatherData();
+        loadTimeline();
+    }
+    
+    async function loadDashboardData() {
+        try {
+            const response = await fetch('/api/scenarios');
+            const scenarios = await response.json();
+            
+            updateScenariosTable(scenarios);
+            updateStatusCounts(scenarios);
+        } catch (error) {
+            console.error('Error loading scenarios:', error);
+            showToast('Error loading scenarios', 'error');
+            
+            // Show sample data for demo
+            const sampleScenarios = [
+                {
+                    id: 'ER-2024-001',
+                    type: 'Hurricane',
+                    location: 'Miami, FL',
+                    severity: 'High',
+                    status: 'Active',
+                    created_at: new Date(Date.now() - 3600000).toISOString(),
+                    description: 'Category 3 hurricane approaching coastline'
+                },
+                {
+                    id: 'ER-2024-002',
+                    type: 'Wildfire',
+                    location: 'Los Angeles, CA',
+                    severity: 'Medium',
+                    status: 'Monitoring',
+                    created_at: new Date(Date.now() - 7200000).toISOString(),
+                    description: 'Wildfire in mountainous region'
+                },
+                {
+                    id: 'ER-2024-003',
+                    type: 'Flood',
+                    location: 'Houston, TX',
+                    severity: 'High',
+                    status: 'Responding',
+                    created_at: new Date(Date.now() - 1800000).toISOString(),
+                    description: 'Flash flooding in urban areas'
+                }
+            ];
+            updateScenariosTable(sampleScenarios);
+            updateStatusCounts(sampleScenarios);
+        }
+    }
+    
+    function updateScenariosTable(scenarios) {
+        const tbody = document.getElementById('scenarios-table');
+        
+        if (scenarios.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        <i class="fas fa-info-circle me-2"></i>No active scenarios
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = scenarios.map(scenario => {
+            const severityClass = getSeverityClass(scenario.severity);
+            const statusClass = getStatusClass(scenario.status);
+            const timeAgo = getTimeAgo(scenario.created_at);
+            
+            return `
+                <tr>
+                    <td><strong>${scenario.id}</strong></td>
+                    <td>
+                        <i class="fas ${getTypeIcon(scenario.type)} me-1"></i>
+                        ${scenario.type}
+                    </td>
+                    <td>${scenario.location}</td>
+                    <td>
+                        <span class="badge ${severityClass}">${scenario.severity}</span>
+                    </td>
+                    <td>
+                        <span class="badge ${statusClass}">${scenario.status}</span>
+                    </td>
+                    <td>
+                        <small class="text-muted">${timeAgo}</small>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewScenario('${scenario.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success ms-1" onclick="updateScenarioStatus('${scenario.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+    
+    function updateStatusCounts(scenarios) {
+        const counts = {
+            critical: scenarios.filter(s => s.severity === 'Critical').length,
+            high: scenarios.filter(s => s.severity === 'High').length,
+            medium: scenarios.filter(s => s.severity === 'Medium').length,
+            controlled: scenarios.filter(s => s.status === 'Resolved' || s.status === 'Monitoring').length
+        };
+        
+        document.getElementById('critical-count').textContent = counts.critical;
+        document.getElementById('high-count').textContent = counts.high;
+        document.getElementById('medium-count').textContent = counts.medium;
+        document.getElementById('controlled-count').textContent = counts.controlled;
+    }
+    
+    async function loadWeatherData() {
+        try {
+            const response = await fetch('/api/weather?location=New York');
+            const weather = await response.json();
+            
+            const widget = document.getElementById('weather-widget');
+            widget.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-thermometer-half fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">${weather.temperature}°F</h5>
+                        <p class="mb-1">${weather.description}</p>
+                        <small class="text-muted">
+                            <i class="fas fa-eye me-1"></i>Visibility: ${weather.visibility || 'Good'}
+                            <br>
+                            <i class="fas fa-wind me-1"></i>Wind: ${weather.wind_speed || 5} mph
+                        </small>
+                    </div>
+                </div>
+            `;
+        } catch (error) {
+            console.error('Error loading weather:', error);
+            const widget = document.getElementById('weather-widget');
+            widget.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-thermometer-half fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">72°F</h5>
+                        <p class="mb-1">Partly Cloudy</p>
+                        <small class="text-muted">
+                            <i class="fas fa-eye me-1"></i>Visibility: Good
+                            <br>
+                            <i class="fas fa-wind me-1"></i>Wind: 8 mph
+                        </small>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    function loadTimeline() {
+        const timeline = document.getElementById('response-timeline');
+        
+        // Sample timeline data for demo
+        const timelineItems = [
+            { time: '2 mins ago', action: 'Emergency scenario ER-2024-003 created', type: 'creation' },
+            { time: '5 mins ago', action: 'Response team dispatched to Miami, FL', type: 'dispatch' },
+            { time: '12 mins ago', action: 'Weather alert received for hurricane tracking', type: 'alert' },
+            { time: '25 mins ago', action: 'Resource allocation completed for wildfire response', type: 'resource' },
+            { time: '1 hour ago', action: 'Emergency shelter activated in Houston, TX', type: 'shelter' }
+        ];
+        
+        timeline.innerHTML = timelineItems.map(item => `
+            <div class="timeline-item d-flex align-items-center mb-3">
+                <div class="timeline-icon me-3">
+                    <i class="fas ${getTimelineIcon(item.type)} text-primary"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <p class="mb-1">${item.action}</p>
+                    <small class="text-muted">${item.time}</small>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    function getSeverityClass(severity) {
+        const classes = {
+            'Critical': 'bg-danger',
+            'High': 'bg-warning',
+            'Medium': 'bg-info',
+            'Low': 'bg-success'
+        };
+        return classes[severity] || 'bg-secondary';
+    }
+    
+    function getStatusClass(status) {
+        const classes = {
+            'Active': 'bg-danger',
+            'Responding': 'bg-warning',
+            'Monitoring': 'bg-info',
+            'Resolved': 'bg-success'
+        };
+        return classes[status] || 'bg-secondary';
+    }
+    
+    function getTypeIcon(type) {
+        const icons = {
+            'Hurricane': 'fa-hurricane',
+            'Wildfire': 'fa-fire',
+            'Flood': 'fa-water',
+            'Earthquake': 'fa-mountain',
+            'Tornado': 'fa-wind'
+        };
+        return icons[type] || 'fa-exclamation-triangle';
+    }
+    
+    function getTimelineIcon(type) {
+        const icons = {
+            'creation': 'fa-plus-circle',
+            'dispatch': 'fa-truck',
+            'alert': 'fa-bell',
+            'resource': 'fa-boxes',
+            'shelter': 'fa-home'
+        };
+        return icons[type] || 'fa-circle';
+    }
+    
+    function getTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        
+        if (diffMins < 60) return `${diffMins} mins ago`;
+        const diffHours = Math.floor(diffMins / 60);
+        if (diffHours < 24) return `${diffHours} hours ago`;
+        const diffDays = Math.floor(diffHours / 24);
+        return `${diffDays} days ago`;
+    }
+    
+    function viewScenario(scenarioId) {
+        // Load scenario details into modal
+        const modalBody = document.getElementById('scenario-details');
+        modalBody.innerHTML = `
+            <div class="text-center py-3">
+                <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+                <p class="text-muted mt-2">Loading scenario details...</p>
+            </div>
+        `;
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('scenarioModal'));
+        modal.show();
+        
+        // Simulate loading scenario details
+        setTimeout(() => {
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Scenario Information</h6>
+                        <p><strong>ID:</strong> ${scenarioId}</p>
+                        <p><strong>Type:</strong> Hurricane</p>
+                        <p><strong>Location:</strong> Miami, FL</p>
+                        <p><strong>Severity:</strong> <span class="badge bg-warning">High</span></p>
+                        <p><strong>Status:</strong> <span class="badge bg-danger">Active</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Response Details</h6>
+                        <p><strong>Personnel Deployed:</strong> 150</p>
+                        <p><strong>Vehicles Dispatched:</strong> 25</p>
+                        <p><strong>Shelters Activated:</strong> 3</p>
+                        <p><strong>Estimated Duration:</strong> 8-12 hours</p>
+                    </div>
+                </div>
+                <hr>
+                <h6>Response Plan Summary</h6>
+                <p>Category 3 hurricane approaching Miami coastline. Evacuation procedures initiated for coastal areas. Emergency shelters activated at designated locations. Medical teams on standby.</p>
+            `;
+        }, 1000);
+    }
+    
+    function updateScenarioStatus(scenarioId) {
+        showToast(`Updating status for ${scenarioId}...`, 'info');
+        // Implement status update logic
+    }
+    
+    // Cleanup interval on page unload
+    window.addEventListener('beforeunload', function() {
+        if (dashboardInterval) {
+            clearInterval(dashboardInterval);
+        }
+    });
+</script>
+{% endblock %}

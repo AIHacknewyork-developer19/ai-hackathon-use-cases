@@ -1,0 +1,566 @@
+{% extends "base.html" %}
+
+{% block title %}Create Emergency Scenario - Emergency Response Agent{% endblock %}
+
+{% block content %}
+<div class="col-12">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="fas fa-plus-circle me-2 text-primary"></i>
+                Create Emergency Scenario
+            </h2>
+            <p class="text-muted mb-0">Define a new emergency scenario for AI-powered response planning</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Main Form -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Scenario Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="scenario-form">
+                        <!-- Emergency Type -->
+                        <div class="mb-4">
+                            <label for="emergency-type" class="form-label fw-bold">
+                                <i class="fas fa-exclamation-triangle me-1 text-warning"></i>
+                                Emergency Type *
+                            </label>
+                            <select class="form-select" id="emergency-type" name="emergency_type" required>
+                                <option value="">Select emergency type...</option>
+                                <option value="hurricane">Hurricane</option>
+                                <option value="wildfire">Wildfire</option>
+                                <option value="flood">Flood</option>
+                                <option value="earthquake">Earthquake</option>
+                                <option value="tornado">Tornado</option>
+                                <option value="winter_storm">Winter Storm</option>
+                                <option value="drought">Drought</option>
+                                <option value="heat_wave">Heat Wave</option>
+                                <option value="cyber_attack">Cyber Attack</option>
+                                <option value="infrastructure_failure">Infrastructure Failure</option>
+                                <option value="public_health">Public Health Emergency</option>
+                                <option value="fire">Fire (Building/Industrial)</option>
+                                <option value="hazmat">Hazardous Materials</option>
+                                <option value="security_incident">Security Incident</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div class="form-text">Select the primary type of emergency situation</div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="mb-4">
+                            <label for="location" class="form-label fw-bold">
+                                <i class="fas fa-map-marker-alt me-1 text-danger"></i>
+                                Location *
+                            </label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   placeholder="e.g., Miami, FL or specific address" required>
+                            <div class="form-text">Specify the location where the emergency is occurring or expected</div>
+                        </div>
+
+                        <!-- Severity Level -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-thermometer-half me-1 text-info"></i>
+                                Severity Level *
+                            </label>
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="severity" 
+                                               id="severity-low" value="Low">
+                                        <label class="form-check-label" for="severity-low">
+                                            <span class="badge bg-success me-1">Low</span>
+                                            Minimal impact
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="severity" 
+                                               id="severity-medium" value="Medium">
+                                        <label class="form-check-label" for="severity-medium">
+                                            <span class="badge bg-info me-1">Medium</span>
+                                            Moderate impact
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="severity" 
+                                               id="severity-high" value="High" checked>
+                                        <label class="form-check-label" for="severity-high">
+                                            <span class="badge bg-warning me-1">High</span>
+                                            Significant impact
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="severity" 
+                                               id="severity-critical" value="Critical">
+                                        <label class="form-check-label" for="severity-critical">
+                                            <span class="badge bg-danger me-1">Critical</span>
+                                            Life-threatening
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-text">Assessment of the emergency's potential impact</div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-bold">
+                                <i class="fas fa-align-left me-1"></i>
+                                Detailed Description *
+                            </label>
+                            <textarea class="form-control" id="description" name="description" rows="4" 
+                                      placeholder="Provide detailed information about the emergency situation, current conditions, and any specific concerns..." required></textarea>
+                            <div class="form-text">Include as much relevant detail as possible to help AI generate an effective response plan</div>
+                        </div>
+
+                        <!-- Expected Duration -->
+                        <div class="mb-4">
+                            <label for="duration" class="form-label fw-bold">
+                                <i class="fas fa-clock me-1"></i>
+                                Expected Duration
+                            </label>
+                            <select class="form-select" id="duration" name="expected_duration">
+                                <option value="">Select expected duration...</option>
+                                <option value="1-3 hours">1-3 hours</option>
+                                <option value="3-6 hours">3-6 hours</option>
+                                <option value="6-12 hours">6-12 hours</option>
+                                <option value="12-24 hours">12-24 hours</option>
+                                <option value="1-3 days">1-3 days</option>
+                                <option value="3-7 days">3-7 days</option>
+                                <option value="1-2 weeks">1-2 weeks</option>
+                                <option value="2+ weeks">2+ weeks</option>
+                                <option value="unknown">Unknown</option>
+                            </select>
+                            <div class="form-text">Estimated time to resolve or stabilize the situation</div>
+                        </div>
+
+                        <!-- Affected Population -->
+                        <div class="mb-4">
+                            <label for="population" class="form-label fw-bold">
+                                <i class="fas fa-users me-1"></i>
+                                Estimated Affected Population
+                            </label>
+                            <select class="form-select" id="population" name="affected_population">
+                                <option value="">Select population range...</option>
+                                <option value="1-100">1-100 people</option>
+                                <option value="100-500">100-500 people</option>
+                                <option value="500-1000">500-1,000 people</option>
+                                <option value="1000-5000">1,000-5,000 people</option>
+                                <option value="5000-10000">5,000-10,000 people</option>
+                                <option value="10000-50000">10,000-50,000 people</option>
+                                <option value="50000+">50,000+ people</option>
+                                <option value="unknown">Unknown</option>
+                            </select>
+                            <div class="form-text">Approximate number of people potentially affected</div>
+                        </div>
+
+                        <!-- Special Considerations -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-exclamation-circle me-1"></i>
+                                Special Considerations
+                            </label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="vulnerable-pop" name="considerations" value="vulnerable_populations">
+                                        <label class="form-check-label" for="vulnerable-pop">
+                                            Vulnerable populations (elderly, disabled, children)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="hospitals" name="considerations" value="hospitals">
+                                        <label class="form-check-label" for="hospitals">
+                                            Hospitals or medical facilities at risk
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="schools" name="considerations" value="schools">
+                                        <label class="form-check-label" for="schools">
+                                            Schools or educational institutions
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="infrastructure" name="considerations" value="critical_infrastructure">
+                                        <label class="form-check-label" for="infrastructure">
+                                            Critical infrastructure (power, water, communications)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="hazmat" name="considerations" value="hazardous_materials">
+                                        <label class="form-check-label" for="hazmat">
+                                            Hazardous materials present
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="transportation" name="considerations" value="transportation">
+                                        <label class="form-check-label" for="transportation">
+                                            Transportation hubs affected
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="environmental" name="considerations" value="environmental">
+                                        <label class="form-check-label" for="environmental">
+                                            Environmental concerns
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="economic" name="considerations" value="economic">
+                                        <label class="form-check-label" for="economic">
+                                            Economic impact concerns
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-text">Select any additional factors that should be considered in the response plan</div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                <i class="fas fa-undo me-1"></i>Reset Form
+                            </button>
+                            <div>
+                                <button type="button" class="btn btn-outline-primary me-2" onclick="saveAsDraft()">
+                                    <i class="fas fa-save me-1"></i>Save as Draft
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-rocket me-1"></i>Create Scenario & Generate Plan
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar with helpful information -->
+        <div class="col-md-4">
+            <!-- Quick Tips -->
+            <div class="card mb-3">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Quick Tips
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <strong>Be specific</strong> about location and current conditions
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <strong>Include timeline</strong> if the situation is evolving
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <strong>Mention resources</strong> already deployed or available
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <strong>Note constraints</strong> like weather, access, or infrastructure
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Example Scenarios -->
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Example Scenarios
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="small fw-bold">Hurricane Approach</h6>
+                        <p class="small text-muted mb-2">Category 3 hurricane 48 hours from landfall in populated coastal area</p>
+                        <button class="btn btn-sm btn-outline-success" onclick="loadExample('hurricane')">Load Example</button>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <h6 class="small fw-bold">Urban Wildfire</h6>
+                        <p class="small text-muted mb-2">Fast-moving wildfire threatening residential neighborhoods</p>
+                        <button class="btn btn-sm btn-outline-success" onclick="loadExample('wildfire')">Load Example</button>
+                    </div>
+                    <hr>
+                    <div class="mb-0">
+                        <h6 class="small fw-bold">Flash Flood</h6>
+                        <p class="small text-muted mb-2">Sudden flooding in urban area with trapped civilians</p>
+                        <button class="btn btn-sm btn-outline-success" onclick="loadExample('flood')">Load Example</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Processing Information -->
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="fas fa-cogs me-2"></i>AI Processing
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small mb-2">Once you submit the scenario, our AI system will:</p>
+                    <ol class="small mb-0">
+                        <li>Analyze the emergency situation</li>
+                        <li>Fetch current weather conditions</li>
+                        <li>Generate resource allocation plan</li>
+                        <li>Create response timeline</li>
+                        <li>Coordinate multi-agency response</li>
+                    </ol>
+                    <hr>
+                    <p class="small text-muted mb-0">
+                        <i class="fas fa-clock me-1"></i>
+                        Typical processing time: 30-60 seconds
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Processing Modal -->
+<div class="modal fade" id="processingModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+                <h5>Processing Emergency Scenario</h5>
+                <p class="text-muted mb-0" id="processing-status">Initializing AI coordination...</p>
+                <div class="progress mt-3" style="height: 8px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" id="processing-progress" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const examples = {
+        hurricane: {
+            emergency_type: 'hurricane',
+            location: 'Miami-Dade County, FL',
+            severity: 'High',
+            description: 'Category 3 hurricane with sustained winds of 120 mph approaching South Florida coastline. Expected landfall in 36-48 hours. Storm surge of 8-12 feet predicted for coastal areas. Mandatory evacuations ordered for zones A and B. Current conditions: increasing winds and rain, some power outages already reported.',
+            expected_duration: '12-24 hours',
+            affected_population: '500000+',
+            considerations: ['vulnerable_populations', 'hospitals', 'critical_infrastructure']
+        },
+        wildfire: {
+            emergency_type: 'wildfire',
+            location: 'Riverside County, CA',
+            severity: 'High',
+            description: 'Fast-moving wildfire ignited by downed power lines, currently burning 5,000 acres with 0% containment. Red flag warning in effect with winds gusting up to 60 mph. Fire threatening 1,200 homes in residential areas. Evacuation orders issued for neighborhoods east of Highway 74.',
+            expected_duration: '3-7 days',
+            affected_population: '5000-10000',
+            considerations: ['vulnerable_populations', 'environmental', 'critical_infrastructure']
+        },
+        flood: {
+            emergency_type: 'flood',
+            location: 'Downtown Houston, TX',
+            severity: 'Critical',
+            description: 'Flash flooding from severe thunderstorms has inundated downtown area with 3-6 feet of water. Multiple vehicles stranded on highways, civilians trapped in buildings. Bayou system overwhelmed. Power outages affecting 150,000 customers. Emergency services struggling to reach affected areas.',
+            expected_duration: '6-12 hours',
+            affected_population: '50000+',
+            considerations: ['vulnerable_populations', 'hospitals', 'critical_infrastructure', 'transportation']
+        }
+    };
+    
+    document.getElementById('scenario-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Show processing modal
+        const modal = new bootstrap.Modal(document.getElementById('processingModal'));
+        modal.show();
+        
+        // Simulate processing steps
+        await simulateProcessing();
+        
+        // Get form data
+        const formData = new FormData(this);
+        const scenarioData = {};
+        
+        // Convert form data to object
+        for (let [key, value] of formData.entries()) {
+            if (key === 'considerations') {
+                if (!scenarioData[key]) scenarioData[key] = [];
+                scenarioData[key].push(value);
+            } else {
+                scenarioData[key] = value;
+            }
+        }
+        
+        try {
+            const response = await fetch('/api/scenarios', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(scenarioData)
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                modal.hide();
+                showToast('Emergency scenario created successfully!', 'success');
+                
+                // Redirect to dashboard after a short delay
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 2000);
+            } else {
+                throw new Error('Failed to create scenario');
+            }
+        } catch (error) {
+            console.error('Error creating scenario:', error);
+            modal.hide();
+            showToast('Error creating scenario. Please try again.', 'error');
+        }
+    });
+    
+    async function simulateProcessing() {
+        const steps = [
+            { text: 'Initializing AI coordination...', progress: 10 },
+            { text: 'Analyzing emergency parameters...', progress: 25 },
+            { text: 'Fetching weather conditions...', progress: 40 },
+            { text: 'Calculating resource requirements...', progress: 60 },
+            { text: 'Generating response timeline...', progress: 80 },
+            { text: 'Finalizing coordination plan...', progress: 100 }
+        ];
+        
+        for (const step of steps) {
+            await new Promise(resolve => setTimeout(resolve, 800));
+            document.getElementById('processing-status').textContent = step.text;
+            document.getElementById('processing-progress').style.width = step.progress + '%';
+        }
+    }
+    
+    function loadExample(type) {
+        const example = examples[type];
+        if (!example) return;
+        
+        // Fill form fields
+        document.getElementById('emergency-type').value = example.emergency_type;
+        document.getElementById('location').value = example.location;
+        document.querySelector(`input[name="severity"][value="${example.severity}"]`).checked = true;
+        document.getElementById('description').value = example.description;
+        document.getElementById('duration').value = example.expected_duration;
+        document.getElementById('population').value = example.affected_population;
+        
+        // Clear and set considerations
+        document.querySelectorAll('input[name="considerations"]').forEach(cb => cb.checked = false);
+        example.considerations.forEach(consideration => {
+            const checkbox = document.querySelector(`input[name="considerations"][value="${consideration}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
+        
+        showToast(`Loaded ${type} example scenario`, 'info');
+        
+        // Scroll to top of form
+        document.getElementById('emergency-type').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function resetForm() {
+        if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
+            document.getElementById('scenario-form').reset();
+            // Reset to default severity
+            document.getElementById('severity-high').checked = true;
+            showToast('Form reset successfully', 'info');
+        }
+    }
+    
+    function saveAsDraft() {
+        const formData = new FormData(document.getElementById('scenario-form'));
+        const draftData = {};
+        
+        for (let [key, value] of formData.entries()) {
+            if (key === 'considerations') {
+                if (!draftData[key]) draftData[key] = [];
+                draftData[key].push(value);
+            } else {
+                draftData[key] = value;
+            }
+        }
+        
+        // Save to localStorage
+        localStorage.setItem('emergency_scenario_draft', JSON.stringify(draftData));
+        showToast('Draft saved successfully', 'success');
+    }
+    
+    // Load draft on page load if it exists
+    document.addEventListener('DOMContentLoaded', function() {
+        const draft = localStorage.getItem('emergency_scenario_draft');
+        if (draft) {
+            try {
+                const draftData = JSON.parse(draft);
+                
+                // Ask user if they want to load the draft
+                if (confirm('A saved draft was found. Would you like to load it?')) {
+                    // Fill form with draft data
+                    Object.keys(draftData).forEach(key => {
+                        if (key === 'considerations') {
+                            draftData[key].forEach(value => {
+                                const checkbox = document.querySelector(`input[name="considerations"][value="${value}"]`);
+                                if (checkbox) checkbox.checked = true;
+                            });
+                        } else if (key === 'severity') {
+                            const radio = document.querySelector(`input[name="severity"][value="${draftData[key]}"]`);
+                            if (radio) radio.checked = true;
+                        } else {
+                            const element = document.getElementById(key.replace('_', '-'));
+                            if (element) element.value = draftData[key];
+                        }
+                    });
+                    
+                    showToast('Draft loaded successfully', 'info');
+                } else {
+                    // Clear the draft
+                    localStorage.removeItem('emergency_scenario_draft');
+                }
+            } catch (error) {
+                console.error('Error loading draft:', error);
+                localStorage.removeItem('emergency_scenario_draft');
+            }
+        }
+    });
+    
+    // Auto-save draft every 30 seconds if form has content
+    setInterval(() => {
+        const form = document.getElementById('scenario-form');
+        const formData = new FormData(form);
+        let hasContent = false;
+        
+        for (let [key, value] of formData.entries()) {
+            if (value && value.trim()) {
+                hasContent = true;
+                break;
+            }
+        }
+        
+        if (hasContent) {
+            saveAsDraft();
+        }
+    }, 30000);
+</script>
+{% endblock %}

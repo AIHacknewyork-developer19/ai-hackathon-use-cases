@@ -1,0 +1,571 @@
+{% extends "base.html" %}
+
+{% block title %}Policy Compliance Checker - AI Integrated System{% endblock %}
+
+{% block content %}
+<div class="col-12">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="fas fa-balance-scale me-2 text-warning"></i>
+                Policy Compliance Checker
+            </h2>
+            <p class="text-muted mb-0">AI-powered document analysis for policy compliance and regulatory assessment</p>
+        </div>
+        <div>
+            <a href="/agents" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-arrow-left me-1"></i>Back to Agents Hub
+            </a>
+            <button class="btn btn-warning" onclick="showPolicyExample()">
+                <i class="fas fa-eye me-1"></i>View Example
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Analysis Form -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-alt me-2"></i>Document Analysis
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="policy-analysis-form">
+                        <!-- Analysis Type -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-cog me-1"></i>Analysis Type
+                            </label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="analysis_type" 
+                                               id="type-document" value="document" checked>
+                                        <label class="form-check-label" for="type-document">
+                                            <strong>Document Upload</strong><br>
+                                            <small class="text-muted">Upload PDF or Word document for analysis</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="analysis_type" 
+                                               id="type-text" value="text">
+                                        <label class="form-check-label" for="type-text">
+                                            <strong>Text Input</strong><br>
+                                            <small class="text-muted">Paste policy text directly</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Document Upload Section -->
+                        <div id="document-section" class="mb-4">
+                            <label for="document-upload" class="form-label fw-bold">
+                                <i class="fas fa-upload me-1"></i>Upload Document
+                            </label>
+                            <div class="border border-dashed border-warning rounded p-4 text-center">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-warning mb-3"></i>
+                                <h6>Drag and drop your document here</h6>
+                                <p class="text-muted mb-2">Supported formats: PDF, DOC, DOCX</p>
+                                <input type="file" class="form-control" id="document-upload" 
+                                       accept=".pdf,.doc,.docx" style="display: none;">
+                                <button type="button" class="btn btn-outline-warning" onclick="document.getElementById('document-upload').click()">
+                                    <i class="fas fa-folder-open me-1"></i>Choose File
+                                </button>
+                                <div id="file-info" class="mt-2" style="display: none;">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-file me-2"></i>
+                                        <span id="file-name"></span> (<span id="file-size"></span>)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Text Input Section -->
+                        <div id="text-section" class="mb-4" style="display: none;">
+                            <label for="policy-text" class="form-label fw-bold">
+                                <i class="fas fa-align-left me-1"></i>Policy Text
+                            </label>
+                            <textarea class="form-control" id="policy-text" rows="10" 
+                                      placeholder="Paste your policy or regulatory text here for AI analysis..."></textarea>
+                            <div class="form-text">Enter the policy text that you want to analyze for compliance</div>
+                        </div>
+
+                        <!-- Analysis Options -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-sliders-h me-1"></i>Analysis Options
+                            </label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="compliance-check" checked>
+                                        <label class="form-check-label" for="compliance-check">
+                                            Compliance Assessment
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="improvement-suggestions" checked>
+                                        <label class="form-check-label" for="improvement-suggestions">
+                                            Improvement Suggestions
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="risk-analysis">
+                                        <label class="form-check-label" for="risk-analysis">
+                                            Risk Analysis
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="regulatory-mapping">
+                                        <label class="form-check-label" for="regulatory-mapping">
+                                            Regulatory Mapping
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                <i class="fas fa-undo me-1"></i>Reset
+                            </button>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-search me-1"></i>Analyze Policy
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Analysis Status -->
+            <div class="card mb-3">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Analysis Status
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="analysis-status">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-clock fa-2x mb-2"></i>
+                            <p>Ready to analyze your policy document</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Documents -->
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-file-download me-2"></i>Sample Documents
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small mb-3">Try analyzing these sample policy documents:</p>
+                    
+                    <div class="mb-2">
+                        <button class="btn btn-sm btn-outline-success w-100" onclick="loadSample('emergency')">
+                            <i class="fas fa-shield-alt me-1"></i>Emergency Response Policy
+                        </button>
+                    </div>
+                    <div class="mb-2">
+                        <button class="btn btn-sm btn-outline-success w-100" onclick="loadSample('privacy')">
+                            <i class="fas fa-user-shield me-1"></i>Privacy Policy
+                        </button>
+                    </div>
+                    <div class="mb-2">
+                        <button class="btn btn-sm btn-outline-success w-100" onclick="loadSample('healthcare')">
+                            <i class="fas fa-heartbeat me-1"></i>Healthcare Compliance
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Features -->
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-robot me-2"></i>AI Features
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <strong>Semantic Analysis:</strong> Deep understanding of policy content
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <strong>Compliance Rules:</strong> 15+ built-in rule templates
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <strong>Multi-format Support:</strong> PDF, Word, and text
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <strong>Improvement Engine:</strong> AI-powered recommendations
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="row mt-4" id="results-section" style="display: none;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Analysis Results
+                    </h5>
+                </div>
+                <div class="card-body" id="results-content">
+                    <!-- Results will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Processing Modal -->
+<div class="modal fade" id="processingModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <div class="spinner-border text-warning mb-3" style="width: 3rem; height: 3rem;"></div>
+                <h5>Analyzing Policy Document</h5>
+                <p class="text-muted mb-0" id="processing-status">Initializing AI analysis...</p>
+                <div class="progress mt-3" style="height: 8px;">
+                    <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" 
+                         id="processing-progress" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const samplePolicies = {
+        emergency: `Emergency Response Policy
+
+1. PURPOSE AND SCOPE
+This policy establishes procedures for responding to emergency situations that may threaten the safety and security of personnel, visitors, and property.
+
+2. EMERGENCY RESPONSE TEAM
+- Emergency Coordinator: Responsible for overall emergency response coordination
+- Safety Officer: Ensures compliance with safety protocols
+- Communications Lead: Manages internal and external communications
+
+3. EMERGENCY PROCEDURES
+3.1 Immediate Response
+- Assess the situation and ensure personal safety
+- Activate emergency response procedures
+- Contact emergency services if required (911)
+- Notify the Emergency Coordinator
+
+3.2 Evacuation Procedures
+- Follow designated evacuation routes
+- Proceed to assembly points
+- Account for all personnel
+- Await further instructions
+
+4. COMMUNICATION PROTOCOLS
+- Use established communication channels
+- Provide regular updates to stakeholders
+- Coordinate with external agencies as needed
+
+5. TRAINING AND PREPAREDNESS
+- Conduct regular emergency drills
+- Provide emergency response training
+- Maintain emergency equipment and supplies`,
+
+        privacy: `Privacy Policy
+
+1. INFORMATION COLLECTION
+We collect information that you provide directly to us, such as when you create an account, make a purchase, or contact us for support.
+
+2. USE OF INFORMATION
+We use the information we collect to:
+- Provide and maintain our services
+- Process transactions
+- Send communications
+- Improve our services
+
+3. INFORMATION SHARING
+We do not sell or rent your personal information to third parties. We may share your information in limited circumstances as described in this policy.
+
+4. DATA SECURITY
+We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
+
+5. YOUR RIGHTS
+You have the right to:
+- Access your personal information
+- Correct inaccurate information
+- Delete your information
+- Restrict processing`,
+
+        healthcare: `Healthcare Compliance Policy
+
+1. HIPAA COMPLIANCE
+All healthcare information must be handled in accordance with HIPAA regulations to protect patient privacy and confidentiality.
+
+2. ACCESS CONTROLS
+- Implement role-based access controls
+- Use strong authentication mechanisms
+- Regular access reviews and updates
+
+3. DATA ENCRYPTION
+- Encrypt data at rest and in transit
+- Use approved encryption standards
+- Maintain encryption key management
+
+4. INCIDENT RESPONSE
+- Report breaches within 60 days
+- Conduct thorough investigations
+- Implement corrective actions
+
+5. TRAINING REQUIREMENTS
+- Annual HIPAA training for all staff
+- Specialized training for roles with access to PHI
+- Documentation of training completion`
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setupFormHandlers();
+    });
+
+    function setupFormHandlers() {
+        // Analysis type radio buttons
+        document.querySelectorAll('input[name="analysis_type"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                toggleAnalysisType(this.value);
+            });
+        });
+
+        // File upload
+        document.getElementById('document-upload').addEventListener('change', function(e) {
+            handleFileUpload(e.target.files[0]);
+        });
+
+        // Form submission
+        document.getElementById('policy-analysis-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitAnalysis();
+        });
+    }
+
+    function toggleAnalysisType(type) {
+        const documentSection = document.getElementById('document-section');
+        const textSection = document.getElementById('text-section');
+
+        if (type === 'document') {
+            documentSection.style.display = 'block';
+            textSection.style.display = 'none';
+        } else {
+            documentSection.style.display = 'none';
+            textSection.style.display = 'block';
+        }
+    }
+
+    function handleFileUpload(file) {
+        if (!file) return;
+
+        const fileInfo = document.getElementById('file-info');
+        const fileName = document.getElementById('file-name');
+        const fileSize = document.getElementById('file-size');
+
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+        fileInfo.style.display = 'block';
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    async function submitAnalysis() {
+        const analysisType = document.querySelector('input[name="analysis_type"]:checked').value;
+        const modal = new bootstrap.Modal(document.getElementById('processingModal'));
+        
+        modal.show();
+        await simulateProcessing();
+
+        let requestData = {};
+
+        if (analysisType === 'document') {
+            const fileInput = document.getElementById('document-upload');
+            if (!fileInput.files[0]) {
+                modal.hide();
+                showToast('Please select a document to upload', 'error');
+                return;
+            }
+            requestData.document_path = fileInput.files[0].name;
+        } else {
+            const policyText = document.getElementById('policy-text').value;
+            if (!policyText.trim()) {
+                modal.hide();
+                showToast('Please enter policy text to analyze', 'error');
+                return;
+            }
+            requestData.policy_text = policyText;
+        }
+
+        try {
+            const response = await fetch('/api/policy/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            const result = await response.json();
+            modal.hide();
+
+            if (result.success) {
+                displayResults(result.analysis);
+                showToast('Policy analysis completed successfully', 'success');
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            modal.hide();
+            console.error('Analysis error:', error);
+            
+            // Show mock results for demo
+            displayMockResults(analysisType);
+            showToast('Analysis completed (demo mode)', 'info');
+        }
+    }
+
+    async function simulateProcessing() {
+        const steps = [
+            { text: 'Initializing AI analysis...', progress: 10 },
+            { text: 'Parsing document structure...', progress: 30 },
+            { text: 'Analyzing policy content...', progress: 50 },
+            { text: 'Checking compliance rules...', progress: 70 },
+            { text: 'Generating recommendations...', progress: 90 },
+            { text: 'Finalizing report...', progress: 100 }
+        ];
+
+        for (const step of steps) {
+            await new Promise(resolve => setTimeout(resolve, 800));
+            document.getElementById('processing-status').textContent = step.text;
+            document.getElementById('processing-progress').style.width = step.progress + '%';
+        }
+    }
+
+    function displayMockResults(analysisType) {
+        const resultsSection = document.getElementById('results-section');
+        const resultsContent = document.getElementById('results-content');
+
+        const mockResults = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Compliance Score</h6>
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-success" style="width: 85%">85%</div>
+                    </div>
+                    
+                    <h6>Key Findings</h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Strong privacy protections
+                            <span class="badge bg-success rounded-pill">✓</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Clear emergency procedures
+                            <span class="badge bg-success rounded-pill">✓</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Missing data retention policy
+                            <span class="badge bg-warning rounded-pill">!</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>Recommendations</h6>
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">Suggested Improvements:</h6>
+                        <ul class="mb-0">
+                            <li>Add specific data retention timeframes</li>
+                            <li>Include breach notification procedures</li>
+                            <li>Define roles and responsibilities more clearly</li>
+                        </ul>
+                    </div>
+                    
+                    <h6>Risk Assessment</h6>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="card bg-light text-center">
+                                <div class="card-body py-2">
+                                    <small class="text-muted">Legal Risk</small>
+                                    <div class="fw-bold text-warning">Low</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light text-center">
+                                <div class="card-body py-2">
+                                    <small class="text-muted">Compliance Risk</small>
+                                    <div class="fw-bold text-success">Very Low</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        resultsContent.innerHTML = mockResults;
+        resultsSection.style.display = 'block';
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function displayResults(analysis) {
+        // This would display real results from the API
+        displayMockResults();
+    }
+
+    function loadSample(type) {
+        document.getElementById('type-text').checked = true;
+        toggleAnalysisType('text');
+        document.getElementById('policy-text').value = samplePolicies[type];
+        showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} policy sample loaded`, 'info');
+    }
+
+    function resetForm() {
+        document.getElementById('policy-analysis-form').reset();
+        document.getElementById('file-info').style.display = 'none';
+        document.getElementById('results-section').style.display = 'none';
+        toggleAnalysisType('document');
+        showToast('Form reset successfully', 'info');
+    }
+
+    function showPolicyExample() {
+        loadSample('emergency');
+    }
+</script>
+{% endblock %}

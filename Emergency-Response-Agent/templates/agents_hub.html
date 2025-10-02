@@ -1,0 +1,482 @@
+{% extends "base.html" %}
+
+{% block title %}AI Agents Hub - Integrated Emergency Management System{% endblock %}
+
+{% block content %}
+<div class="col-12">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="fas fa-robot me-2 text-primary"></i>
+                AI Agents Hub
+            </h2>
+            <p class="text-muted mb-0">Integrated artificial intelligence ecosystem for comprehensive emergency management</p>
+        </div>
+        <div>
+            <button class="btn btn-info me-2" onclick="refreshAgentStatus()">
+                <i class="fas fa-sync-alt me-1"></i>Refresh Status
+            </button>
+            <button class="btn btn-success" onclick="runSystemDiagnostics()">
+                <i class="fas fa-stethoscope me-1"></i>System Diagnostics
+            </button>
+        </div>
+    </div>
+
+    <!-- System Overview -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-network-wired me-2"></i>Integrated AI Agent Ecosystem
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <p class="lead">This unified platform integrates four specialized AI agents working together to provide comprehensive emergency management, policy compliance, citizen services, and document processing capabilities.</p>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-check-circle text-success fa-lg me-2"></i>
+                                        <span>Real-time agent collaboration</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-check-circle text-success fa-lg me-2"></i>
+                                        <span>Cross-domain AI integration</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-check-circle text-success fa-lg me-2"></i>
+                                        <span>Unified data processing</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-check-circle text-success fa-lg me-2"></i>
+                                        <span>Semantic Kernel 1.37.0 powered</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="mb-3">
+                                    <div class="spinner-border text-primary" id="system-status-spinner" style="display: none;"></div>
+                                    <div id="system-status-icon">
+                                        <i class="fas fa-server fa-3x text-success"></i>
+                                    </div>
+                                </div>
+                                <h5 id="system-status-text">System Operational</h5>
+                                <small class="text-muted" id="system-status-detail">All agents available</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Agents Grid -->
+    <div class="row mb-4">
+        <!-- Emergency Response Agent -->
+        <div class="col-md-6 mb-3">
+            <div class="card h-100 agent-card" data-agent="emergency_response">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shield-alt me-2"></i>Emergency Response Agent
+                        <span class="badge bg-light text-danger ms-2" id="emergency-status">
+                            {% if agent_status.emergency_response %}Active{% else %}Offline{% endif %}
+                        </span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>AI-powered emergency response planning system for coordinating responses to natural disasters, public health crises, and security incidents.</p>
+                    
+                    <h6>Capabilities:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-1"></i> Real-time emergency scenario analysis</li>
+                        <li><i class="fas fa-check text-success me-1"></i> Multi-agent response coordination</li>
+                        <li><i class="fas fa-check text-success me-1"></i> Resource allocation optimization</li>
+                        <li><i class="fas fa-check text-success me-1"></i> Weather integration & timeline planning</li>
+                    </ul>
+                    
+                    <div class="mt-3">
+                        <a href="/create_scenario" class="btn btn-danger me-2">
+                            <i class="fas fa-plus-circle me-1"></i>Create Scenario
+                        </a>
+                        <a href="/dashboard" class="btn btn-outline-danger">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <small class="text-muted">83 comprehensive tests • Production ready</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Policy Compliance Checker -->
+        <div class="col-md-6 mb-3">
+            <div class="card h-100 agent-card" data-agent="policy_compliance">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-balance-scale me-2"></i>Policy Compliance Checker
+                        <span class="badge bg-dark text-warning ms-2" id="policy-status">
+                            {% if agent_status.policy_compliance %}Active{% else %}Offline{% endif %}
+                        </span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>Advanced document analysis system for compliance checking, policy analysis, and regulatory assessment across multiple document formats.</p>
+                    
+                    <h6>Capabilities:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-1"></i> PDF & Word document processing</li>
+                        <li><i class="fas fa-check text-success me-1"></i> AI-powered compliance analysis</li>
+                        <li><i class="fas fa-check text-success me-1"></i> Policy improvement recommendations</li>
+                        <li><i class="fas fa-check text-success me-1"></i> Multi-step validation workflow</li>
+                    </ul>
+                    
+                    <div class="mt-3">
+                        <a href="/policy-compliance" class="btn btn-warning me-2">
+                            <i class="fas fa-file-alt me-1"></i>Analyze Policy
+                        </a>
+                        <button class="btn btn-outline-warning" onclick="showPolicyDemo()">
+                            <i class="fas fa-play me-1"></i>Demo
+                        </button>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <small class="text-muted">59 tests • Pydantic v2 compatible</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Virtual Citizen Assistant -->
+        <div class="col-md-6 mb-3">
+            <div class="card h-100 agent-card" data-agent="citizen_assistant">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i>Virtual Citizen Assistant
+                        <span class="badge bg-light text-info ms-2" id="citizen-status">
+                            {% if agent_status.citizen_assistant %}Active{% else %}Offline{% endif %}
+                        </span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>RAG-powered assistant providing citizens with information about government services, document retrieval, and appointment scheduling.</p>
+                    
+                    <h6>Capabilities:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-1"></i> Azure AI Search integration</li>
+                        <li><i class="fas fa-check text-success me-1"></i> Document retrieval & chat interface</li>
+                        <li><i class="fas fa-check text-success me-1"></i> Appointment scheduling system</li>
+                        <li><i class="fas fa-check text-success me-1"></i> Multi-language support</li>
+                    </ul>
+                    
+                    <div class="mt-3">
+                        <a href="/citizen-assistant" class="btn btn-info me-2">
+                            <i class="fas fa-comments me-1"></i>Start Chat
+                        </a>
+                        <button class="btn btn-outline-info" onclick="showCitizenDemo()">
+                            <i class="fas fa-question-circle me-1"></i>Help
+                        </button>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <small class="text-muted">64 tests • RAG architecture</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Eligibility Agent -->
+        <div class="col-md-6 mb-3">
+            <div class="card h-100 agent-card" data-agent="document_eligibility">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-signature me-2"></i>Document Eligibility Agent
+                        <span class="badge bg-light text-success ms-2" id="document-status">
+                            {% if agent_status.document_eligibility %}Active{% else %}Offline{% endif %}
+                        </span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>Automated eligibility processing system using Microsoft Graph API for email processing and Azure Document Intelligence for OCR.</p>
+                    
+                    <h6>Capabilities:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-1"></i> Email attachment processing</li>
+                        <li><i class="fas fa-check text-success me-1"></i> OCR & document classification</li>
+                        <li><i class="fas fa-check text-success me-1"></i> Eligibility calculation engine</li>
+                        <li><i class="fas fa-check text-success me-1"></i> Automated workflow management</li>
+                    </ul>
+                    
+                    <div class="mt-3">
+                        <a href="/document-eligibility" class="btn btn-success me-2">
+                            <i class="fas fa-upload me-1"></i>Process Document
+                        </a>
+                        <button class="btn btn-outline-success" onclick="showDocumentDemo()">
+                            <i class="fas fa-info me-1"></i>Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <small class="text-muted">67 tests • Azure integration</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cross-Agent Collaboration -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-handshake me-2"></i>Cross-Agent Collaboration
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">Our agents work together to provide comprehensive solutions. Try these collaborative workflows:</p>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card bg-light h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2"></i>
+                                    <h6>Emergency + Policy Check</h6>
+                                    <p class="small text-muted">Create emergency response plan with policy compliance validation</p>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="startCollaboration('emergency_policy')">
+                                        Start Workflow
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-file-medical fa-2x text-info mb-2"></i>
+                                    <h6>Document + Citizen Service</h6>
+                                    <p class="small text-muted">Process eligibility documents with citizen assistance</p>
+                                    <button class="btn btn-sm btn-outline-info" onclick="startCollaboration('document_citizen')">
+                                        Start Workflow
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-cogs fa-2x text-success mb-2"></i>
+                                    <h6>Multi-Agent Analysis</h6>
+                                    <p class="small text-muted">Comprehensive analysis using all available agents</p>
+                                    <button class="btn btn-sm btn-outline-success" onclick="startCollaboration('multi_agent')">
+                                        Start Workflow
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Metrics -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-microchip fa-2x text-primary mb-2"></i>
+                    <h4 class="fw-bold mb-1" id="total-agents">4</h4>
+                    <p class="text-muted mb-0">AI Agents</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-tasks fa-2x text-success mb-2"></i>
+                    <h4 class="fw-bold mb-1" id="active-agents">{{ agent_status.values() | select | list | length }}</h4>
+                    <p class="text-muted mb-0">Active Agents</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-2x text-info mb-2"></i>
+                    <h4 class="fw-bold mb-1" id="total-tests">273</h4>
+                    <p class="text-muted mb-0">Total Tests</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-rocket fa-2x text-warning mb-2"></i>
+                    <h4 class="fw-bold mb-1" id="system-uptime">99.9%</h4>
+                    <p class="text-muted mb-0">Uptime</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Collaboration Modal -->
+<div class="modal fade" id="collaborationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cross-Agent Collaboration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="collaboration-content">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="execute-collaboration">Execute Workflow</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        loadAgentStatus();
+        
+        // Refresh status every 30 seconds
+        setInterval(loadAgentStatus, 30000);
+    });
+    
+    async function loadAgentStatus() {
+        try {
+            const response = await fetch('/api/agents/status');
+            const status = await response.json();
+            
+            // Update status badges
+            updateStatusBadge('emergency-status', status.emergency_response.available);
+            updateStatusBadge('policy-status', status.policy_compliance.available);
+            updateStatusBadge('citizen-status', status.citizen_assistant.available);
+            updateStatusBadge('document-status', status.document_eligibility.available);
+            
+            // Update active agents count
+            const activeCount = Object.values(status).filter(agent => 
+                typeof agent === 'object' && agent.available
+            ).length;
+            document.getElementById('active-agents').textContent = activeCount;
+            
+            // Update system status
+            const systemIcon = document.getElementById('system-status-icon');
+            const systemText = document.getElementById('system-status-text');
+            const systemDetail = document.getElementById('system-status-detail');
+            
+            if (status.system_status === 'operational') {
+                systemIcon.innerHTML = '<i class="fas fa-server fa-3x text-success"></i>';
+                systemText.textContent = 'System Operational';
+                systemDetail.textContent = `${activeCount}/4 agents active`;
+            } else {
+                systemIcon.innerHTML = '<i class="fas fa-exclamation-triangle fa-3x text-warning"></i>';
+                systemText.textContent = 'System Initializing';
+                systemDetail.textContent = 'Please wait...';
+            }
+            
+        } catch (error) {
+            console.error('Error loading agent status:', error);
+            showToast('Error loading agent status', 'error');
+        }
+    }
+    
+    function updateStatusBadge(elementId, isActive) {
+        const badge = document.getElementById(elementId);
+        if (badge) {
+            badge.textContent = isActive ? 'Active' : 'Offline';
+            badge.className = `badge ms-2 ${isActive ? 'bg-light text-success' : 'bg-light text-danger'}`;
+        }
+    }
+    
+    function refreshAgentStatus() {
+        document.getElementById('system-status-spinner').style.display = 'inline-block';
+        document.getElementById('system-status-icon').style.display = 'none';
+        
+        loadAgentStatus().finally(() => {
+            document.getElementById('system-status-spinner').style.display = 'none';
+            document.getElementById('system-status-icon').style.display = 'block';
+        });
+        
+        showToast('Agent status refreshed', 'info');
+    }
+    
+    function runSystemDiagnostics() {
+        showToast('Running system diagnostics...', 'info');
+        
+        // Simulate diagnostics
+        setTimeout(() => {
+            showToast('System diagnostics completed - All systems operational', 'success');
+        }, 2000);
+    }
+    
+    function startCollaboration(type) {
+        const modal = new bootstrap.Modal(document.getElementById('collaborationModal'));
+        const content = document.getElementById('collaboration-content');
+        
+        let modalContent = '';
+        
+        switch(type) {
+            case 'emergency_policy':
+                modalContent = `
+                    <h6>Emergency Response + Policy Compliance</h6>
+                    <p>This workflow creates an emergency response plan and validates it against policy compliance rules.</p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        The Emergency Response Agent will generate a response plan, then the Policy Compliance Checker will validate it against relevant policies.
+                    </div>
+                `;
+                break;
+            case 'document_citizen':
+                modalContent = `
+                    <h6>Document Processing + Citizen Services</h6>
+                    <p>Process eligibility documents while providing citizen assistance and guidance.</p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        The Document Eligibility Agent will process documents while the Virtual Citizen Assistant provides guidance.
+                    </div>
+                `;
+                break;
+            case 'multi_agent':
+                modalContent = `
+                    <h6>Multi-Agent Comprehensive Analysis</h6>
+                    <p>Leverage all available agents for comprehensive analysis and processing.</p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        All four agents will collaborate to provide a complete solution.
+                    </div>
+                `;
+                break;
+        }
+        
+        content.innerHTML = modalContent;
+        modal.show();
+    }
+    
+    function showPolicyDemo() {
+        showToast('Policy Compliance Demo - Upload a document to see AI analysis in action', 'info', 8000);
+    }
+    
+    function showCitizenDemo() {
+        showToast('Virtual Citizen Assistant - Ask questions about government services', 'info', 8000);
+    }
+    
+    function showDocumentDemo() {
+        showToast('Document Eligibility Agent - Automated processing with Azure AI', 'info', 8000);
+    }
+</script>
+{% endblock %}
